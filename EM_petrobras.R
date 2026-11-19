@@ -27,7 +27,7 @@ em_mistura <- function(y, K, p, mu, sigma) {
     # log-verossimilhança observada em theta^(t), somamos porque o log transforma produtos em somas
     loglik[t] <- sum(log(fy))
     
-    ## ---------- Passo M ----------
+    #PASSO M
     # n_j efetivo: soma da coluna j de gamma; é o termo que aparece sempre, quantas observações
     #esperamos que sejam do grupo j, que nem escrevi nas anotações
     nj <- colSums(gamma)
