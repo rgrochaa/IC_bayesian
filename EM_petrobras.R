@@ -1,3 +1,7 @@
+
+#Carregando as bibliotecas
+library(tidyverse)
+library(quantmod)
 #Algoritmo EM (parece certo)
 
 em_mistura <- function(y, K, p, mu, sigma) {
@@ -27,7 +31,7 @@ em_mistura <- function(y, K, p, mu, sigma) {
     # log-verossimilhança observada em theta^(t), somamos porque o log transforma produtos em somas
     loglik[t] <- sum(log(fy))
     
-    #PASSO M
+    ## ---------- Passo M ----------
     # n_j efetivo: soma da coluna j de gamma; é o termo que aparece sempre, quantas observações
     #esperamos que sejam do grupo j, que nem escrevi nas anotações
     nj <- colSums(gamma)
@@ -58,8 +62,28 @@ em_mistura <- function(y, K, p, mu, sigma) {
     }
   }
   
-  resultado <- list(p = p, mu = mu, sigma = sigma, iter = t, gamma = gamma)
+ 
   
+  
+  #Agora, vamos classificar cada ponto 
+  
+  
+  classifica_observacoes <- data.frame(observacao = numeric(n),
+                                       grupo = numeric(n))
+  
+  posicao_observacao <- 1 #preciso acompanhar o índice pra preencher o data frame
+  for(observacao in y){
+    grupo <- which.max(gamma[posicao_observacao, ]) #pegar o grupo mais provável
+    classifica_observacoes[posicao_observacao, 1] <- observacao
+    classifica_observacoes[posicao_observacao,2] <- grupo
+    posicao_observacao <- posicao_observacao + 1
+  }
+  
+  
+  grafico <- ggplot(data = classifica_observacoes,
+                     aes(x = observacao, color = factor(grupo))) + geom_density()
+  resultado <- list(p = p, mu = mu, sigma = sigma, iter = t, gamma = gamma,
+                    classificacoes = classifica_observacoes, grafico = grafico)
   return(resultado)
 
 }
